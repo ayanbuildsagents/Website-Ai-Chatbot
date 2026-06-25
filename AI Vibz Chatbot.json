@@ -1,0 +1,161 @@
+{
+  "name": "AI Vibz Chatbot",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "56466428-73fc-4c8a-82f8-3613050fec2a",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -416,
+        -128
+      ],
+      "id": "d5222b14-b7e8-4fcb-afb8-1222b061be36",
+      "name": "Webhook",
+      "webhookId": "56466428-73fc-4c8a-82f8-3613050fec2a"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.body.userMessage }}",
+        "options": {
+          "systemMessage": "You are the AI Vibz assistant — a smart, friendly AI \nfor an automation agency in Lahore, Pakistan.\n\nABOUT AI VIBZ:\n- Founded by Ayan Zeeshan (CS student, University of Lahore)\n- Specializes in agentic AI systems for Pakistani businesses\n\nSERVICES:\n- AI Chatbots for websites (lead capture + FAQs)\n- Voice AI Agents (inbound calling, appointment booking)\n- WhatsApp Automation (lead qualification)\n- n8n Workflow Automation (app + API connections)\n- E-Commerce Support AI (order queries + escalation)\n- Website Monitoring & Alerts\n\nRULES:\n- Keep replies short and conversational (2-4 lines max)\n- If someone asks for pricing → ask their business type first\n- If someone wants a demo → ask for their WhatsApp number\n- Always reply in the same language the user writes in\n- Never make up prices — say \"let's discuss on WhatsApp\""
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        -208,
+        -128
+      ],
+      "id": "e66f66c8-fcef-4728-8a38-611fe79741ef",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4o-mini",
+          "mode": "list",
+          "cachedResultName": "gpt-4o-mini"
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3,
+      "position": [
+        -288,
+        80
+      ],
+      "id": "cb9e5422-7501-441a-8b5b-c5c3b6c45846",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "YA2E8F9wBL2fmPLR",
+          "name": "n8n free OpenAI API credits"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $json.body.sessionId }}",
+        "contextWindowLength": 10
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.4,
+      "position": [
+        -112,
+        80
+      ],
+      "id": "a5eb7a8f-e1c3-4af2-b78b-11d8d3a2fb8e",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "respondWith": "text",
+        "responseBody": "={{ $json.output }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5,
+      "position": [
+        144,
+        -128
+      ],
+      "id": "3186de87-47ea-4bc5-9376-e28b43b40886",
+      "name": "Respond to Webhook"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "885cdde6-50e5-422f-b414-1550ee01ab96",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "a9648e9317e09d3e918d4b6a2b68c386e908309eaea1c2ce874b7addb0f43ade"
+  },
+  "id": "BH75lOSdxaFPKlB9",
+  "tags": [
+    {
+      "updatedAt": "2026-06-04T07:45:56.226Z",
+      "createdAt": "2026-06-04T07:45:56.226Z",
+      "id": "B7pMSWiVeNpbSkgi",
+      "name": "Website Chatbot"
+    }
+  ]
+}
